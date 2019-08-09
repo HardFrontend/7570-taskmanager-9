@@ -1,14 +1,9 @@
 'use strict';
 
-const body = document.querySelector('body');
-const mainControl = document.querySelector('.main__control');
-const main = document.querySelector('.main');
-const container = document.createElement(`div`);
+const mainControl = document.querySelector(`.main__control`);
+const main = document.querySelector(`.main`);
 const wrapper = document.createElement(`div`);
-wrapper.classList.add('container');
-
-
-console.log(container);
+wrapper.classList.add(`container`);
 
 const header = `
        <section class="control__btn-wrap">
@@ -467,7 +462,6 @@ const card = `
           </article>
 `;
 
-
 const board = `
       <section class="board container">
         <div class="board__filter-list">
@@ -484,9 +478,7 @@ const board = `
         </div>
           ${loadMore}
           </section>
-    
 `;
-
 
 const renderComponent = (containerBox, component) => {
   containerBox.insertAdjacentHTML(`beforeend`, component);
