@@ -5,7 +5,8 @@ const main = document.querySelector(`.main`);
 const wrapper = document.createElement(`div`);
 wrapper.classList.add(`container`);
 
-const header = `
+const createSiteHeader = () => {
+  return `
        <section class="control__btn-wrap">
           <input
             type="radio"
@@ -35,8 +36,10 @@ const header = `
           >
         </section>
 `;
+};
 
-const search = `
+const createSiteSearch = () => {
+  return `
         <section class="main__search search container">
         <input
           type="text"
@@ -48,8 +51,10 @@ const search = `
         <label class="visually-hidden" for="search__input">Поиск</label>
       </section>
 `;
+};
 
-const filters = `
+const createFilter = () => {
+  return ` 
   <section class="main__filter filter container">
         <input
           type="radio"
@@ -118,14 +123,18 @@ const filters = `
           >Archive <span class="filter__archive-count">115</span></label
         >
       </section>
-
 `;
-const loadMore = `
-   <button class="load-more" type="button">load more</button>
-`;
+};
 
-const cardEdit = `
-           <article class="card card--edit card--yellow card--repeat">
+const createLoadMore = () => {
+  return `
+          <button class="load-more" type="button">load more</button>
+`;
+};
+
+const createCardEdit = () => {
+  return `
+          <article class="card card--edit card--yellow card--repeat">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
@@ -393,8 +402,10 @@ const cardEdit = `
             </form>
           </article>
 `;
+};
 
-const card = `
+const createCardTemplate = () => {
+  return `
           <article class="card card--black">
             <div class="card__form">
               <div class="card__inner">
@@ -461,9 +472,10 @@ const card = `
             </div>
           </article>
 `;
-
-const board = `
-      <section class="board container">
+};
+const createBoardTemplate = () => {
+  return `
+          <section class="board container">
         <div class="board__filter-list">
           <a href="#" class="board__filter">SORT BY DEFAULT</a>
           <a href="#" class="board__filter">SORT BY DATE up</a>
@@ -471,20 +483,21 @@ const board = `
         </div>
 
         <div class="board__tasks">
-            ${cardEdit}
-            ${card}
-            ${card}
-            ${card}
+            ${createCardEdit()}
+            ${createCardTemplate()}
+            ${createCardTemplate()}
+            ${createCardTemplate()}
         </div>
-          ${loadMore}
+          ${createLoadMore()}
           </section>
 `;
+};
 
 const renderComponent = (containerBox, component) => {
   containerBox.insertAdjacentHTML(`beforeend`, component);
 };
 
-renderComponent(mainControl, header);
-renderComponent(main, search);
-renderComponent(main, filters);
-renderComponent(main, board);
+renderComponent(mainControl, createSiteHeader());
+renderComponent(main, createSiteSearch());
+renderComponent(main, createFilter());
+renderComponent(main, createBoardTemplate());
