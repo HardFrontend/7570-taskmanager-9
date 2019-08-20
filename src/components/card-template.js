@@ -1,18 +1,18 @@
-export const createCardTemplate = ({description, dueDate, repeatingDays, tags, color}) => {
+export const createCardTemplate = ({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) => {
   return `
-          <article class="card card--${color} ${Object.keys(repeatingDays).some(day => repeatingDays[day]) ? `card--repeat` : ``}">
+          <article class="card card--${color} ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``}">
             <div class="card__form">
               <div class="card__inner">
                 <div class="card__control">
                   <button type="button" class="card__btn card__btn--edit">
                     edit
                   </button>
-                  <button type="button" class="card__btn card__btn--archive">
+                  <button type="button" class="card__btn card__btn--archive ${(isArchive) ? `card__btn--disabled` : ``}">
                     archive
                   </button>
                   <button
                     type="button"
-                    class="card__btn card__btn--favorites card__btn--disabled"
+                    class="card__btn card__btn--favorites ${(isFavorite) ? `card__btn--disabled` : ``}"
                   >
                     favorites
                   </button>
@@ -40,12 +40,12 @@ export const createCardTemplate = ({description, dueDate, repeatingDays, tags, c
 
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
-              ${Array.from(tags).map((tag) => `<span class="card__hashtag-inner">
-                <span class="card__hashtag-name">
-                  #${tag}
-                </span>
-              </span>`).join(``)}
-            </div>
+                        ${Array.from(tags).map((tag) => `<span class="card__hashtag-inner">
+                            <span class="card__hashtag-name">
+                         #${tag}
+                        </span>
+                        </span>`).join(``)}
+                     </div>
                     </div>
                   </div>
                 </div>

@@ -43,8 +43,6 @@ export const getTask = () => ({
     `green`,
     `pink`,
   ][Math.floor(Math.random() * 5)],
-  isFavorite: false,
-  isArchive: false
+  isFavorite: Boolean(Math.round(Math.random())),
+  isArchive: Boolean(Math.round(Math.random())),
 });
-
-console.log(getTask());
