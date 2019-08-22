@@ -73,12 +73,12 @@ const loadMore = document.querySelector(`.load-more`);
 
 const TASK_ROW = 8;
 
-let elFirst = 0;
+let elementFrom = 0;
 
 const onButtonShowMore = () => {
-  elFirst += TASK_ROW;
-  let elLast = elFirst + TASK_ROW;
-  const arraySliced = sliceTasks(elFirst, elLast);
+  elementFrom += TASK_ROW;
+  let elementTo = elementFrom + TASK_ROW;
+  const arraySliced = sliceTasks(elementFrom, elementTo);
 
   renderTasks(tasksContainer, arraySliced);
 

@@ -4,16 +4,16 @@ const randomInteger = (min, max) => {
   return rand;
 };
 
+const tagsArray = [
+  `homework`,
+  `theory`,
+  `practice`,
+  `intensive`,
+  `keks`,
+];
+
 const randomTags = (lengthTags) => {
   let arrayNew = [];
-  const tagsArray = [
-    `homework`,
-    `theory`,
-    `practice`,
-    `intensive`,
-    `keks`,
-  ];
-
   new Array(lengthTags).fill(``).forEach(() => arrayNew.push(tagsArray[Math.floor(Math.random() * tagsArray.length)]));
 
   return arrayNew;
