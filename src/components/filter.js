@@ -1,4 +1,4 @@
-export const createFilter = () => {
+export const createFilter = (all, navAmountFavorite, navAmountArchive, navAmountRepeat) => {
   return ` 
   <section class="main__filter filter container">
         <input
@@ -9,7 +9,7 @@ export const createFilter = () => {
           checked
         />
         <label for="filter__all" class="filter__label">
-          All <span class="filter__all-count">13</span></label
+          All <span class="filter__all-count">${all}</span></label
         >
         <input
           type="radio"
@@ -38,7 +38,7 @@ export const createFilter = () => {
           name="filter"
         />
         <label for="filter__favorites" class="filter__label"
-          >Favorites <span class="filter__favorites-count">1</span></label
+          >Favorites <span class="filter__favorites-count">${navAmountFavorite}</span></label
         >
         <input
           type="radio"
@@ -47,7 +47,7 @@ export const createFilter = () => {
           name="filter"
         />
         <label for="filter__repeating" class="filter__label"
-          >Repeating <span class="filter__repeating-count">1</span></label
+          >Repeating <span class="filter__repeating-count">${navAmountRepeat}</span></label
         >
         <input
           type="radio"
@@ -65,7 +65,7 @@ export const createFilter = () => {
           name="filter"
         />
         <label for="filter__archive" class="filter__label"
-          >Archive <span class="filter__archive-count">115</span></label
+          >Archive <span class="filter__archive-count">${navAmountArchive}</span></label
         >
       </section>
 `;

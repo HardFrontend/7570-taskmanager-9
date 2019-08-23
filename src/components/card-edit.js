@@ -1,15 +1,15 @@
-export const createCardEdit = () => {
+export const createCardEdit = ({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) => {
   return `
-          <article class="card card--edit card--yellow card--repeat">
+          <article class="card card--edit card--${color} ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
-                  <button type="button" class="card__btn card__btn--archive">
+                  <button type="button" class="card__btn card__btn--archive ${(isArchive) ? `card__btn--disabled` : ``}">
                     archive
                   </button>
                   <button
                     type="button"
-                    class="card__btn card__btn--favorites card__btn--disabled"
+                    class="card__btn card__btn--favorites ${(isFavorite) ? `card__btn--disabled` : ``}"
                   >
                     favorites
                   </button>
@@ -27,7 +27,7 @@ export const createCardEdit = () => {
                       class="card__text"
                       placeholder="Start typing your text here..."
                       name="text"
-                    >Here is a card with filled data</textarea>
+                    >${description}</textarea>
                   </label>
                 </div>
 
@@ -45,7 +45,7 @@ export const createCardEdit = () => {
                             type="text"
                             placeholder=""
                             name="date"
-                            value="23 September 11:15 PM"
+                            value="${new Date(dueDate).toDateString()}"
                           />
                         </label>
                       </fieldset>
@@ -71,8 +71,7 @@ export const createCardEdit = () => {
                             type="checkbox"
                             id="repeat-tu-4"
                             name="repeat"
-                            value="tu"
-                            checked
+                            value="tu"                           
                           />
                           <label class="card__repeat-day" for="repeat-tu-4"
                             >tu</label
@@ -83,6 +82,7 @@ export const createCardEdit = () => {
                             id="repeat-we-4"
                             name="repeat"
                             value="we"
+                            ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-we-4"
                             >we</label
@@ -103,8 +103,7 @@ export const createCardEdit = () => {
                             id="repeat-fr-4"
                             name="repeat"
                             value="fr"
-                            checked
-                          />
+                            />
                           <label class="card__repeat-day" for="repeat-fr-4"
                             >fr</label
                           >
@@ -124,7 +123,6 @@ export const createCardEdit = () => {
                             id="repeat-su-4"
                             name="repeat"
                             value="su"
-                            checked
                           />
                           <label class="card__repeat-day" for="repeat-su-4"
                             >su</label
@@ -135,52 +133,23 @@ export const createCardEdit = () => {
 
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
+                      ${Array.from(tags).map((tag) => `
                         <span class="card__hashtag-inner">
                           <input
                             type="hidden"
-                            name="hashtag"
+                            name="${tag}"
                             value="repeat"
                             class="card__hashtag-hidden-input"
                           />
                           <p class="card__hashtag-name">
-                            #repeat
+                            #${tag}
                           </p>
                           <button type="button" class="card__hashtag-delete">
                             delete
                           </button>
-                        </span>
-
-                        <span class="card__hashtag-inner">
-                          <input
-                            type="hidden"
-                            name="hashtag"
-                            value="repeat"
-                            class="card__hashtag-hidden-input"
-                          />
-                          <p class="card__hashtag-name">
-                            #cinema
-                          </p>
-                          <button type="button" class="card__hashtag-delete">
-                            delete
-                          </button>
-                        </span>
-
-                        <span class="card__hashtag-inner">
-                          <input
-                            type="hidden"
-                            name="hashtag"
-                            value="repeat"
-                            class="card__hashtag-hidden-input"
-                          />
-                          <p class="card__hashtag-name">
-                            #entertaiment
-                          </p>
-                          <button type="button" class="card__hashtag-delete">
-                            delete
-                          </button>
-                        </span>
+                        </span>`).join(``)}
+                    
                       </div>
-
                       <label>
                         <input
                           type="text"
