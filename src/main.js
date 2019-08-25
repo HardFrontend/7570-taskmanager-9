@@ -1,13 +1,15 @@
-import {createSiteHeader} from "./components/site-header";
-import {createSiteSearch} from "./components/site-search";
-import {createFilter} from "./components/filter";
-import {createLoadMoreButton} from "./components/load-more-button";
-import {createCardEdit} from "./components/card-edit";
-import {createCardTemplate} from "./components/card-template";
-import {createBoardTemplate} from "./components/board";
+import {Position, render} from "./components/utils";
+import {Header} from "./components/site-header";
+import {HeaderSearch} from "./components/site-search";
+import {HeaderFilter} from "./components/filter";
+import {LoadMoreButton} from "./components/load-more-button";
+import {TaskCardEdit} from "./components/card-edit";
+import {TaskCard} from "./components/card-template";
+import {Board} from "./components/board";
 import {getTask} from "./components/data";
 
 const TASK_COUNT = 17;
+const TASK_ROW = 8;
 
 const getDataTasks = () => {
   let arrayFilms = [];
@@ -17,6 +19,28 @@ const getDataTasks = () => {
 };
 
 const dataTasks = getDataTasks();
+const dataTasksCount = dataTasks.length;
+
+
+const mainControl = document.querySelector(`.main__control`);
+const main = document.querySelector(`.main`);
+const wrapper = document.createElement(`div`);
+wrapper.classList.add(`container`);
+
+
+const renderHeader = () => {
+  const header = new Header();
+
+  render(mainControl, header.getElement(), Position.BEFOREEND);
+};
+renderHeader();
+
+const renderHeaderSearch = () => {
+  const headerSearch = new HeaderSearch();
+
+  render(main, headerSearch.getElement(), Position.BEFOREEND);
+};
+renderHeaderSearch();
 
 const countNavTasks = (attribute) => {
   let count = 0;
@@ -30,57 +54,94 @@ const countNavTasks = (attribute) => {
   return count;
 };
 
-const navRepeat1 = () =>
+const navRepeat = () =>
   dataTasks.filter(
       (item) => Object.values(item.repeatingDays).includes(true)
   ).length;
 
 const navAmountFavorite = countNavTasks(`isFavorite`);
 const navAmountArchive = countNavTasks(`isArchive`);
-const navAmountRepeat = navRepeat1();
+const navAmountRepeat = navRepeat();
 
-const mainControl = document.querySelector(`.main__control`);
-const main = document.querySelector(`.main`);
-const wrapper = document.createElement(`div`);
-wrapper.classList.add(`container`);
+const renderHeaderFilter = (dataTasksAmount, navCountFavorite, navCountArchive, navCountRepeat) => {
+  const headerFilter = new HeaderFilter(dataTasksAmount, navCountFavorite, navCountArchive, navCountRepeat);
 
-const renderComponent = (containerBox, component) => {
-  containerBox.insertAdjacentHTML(`beforeend`, component);
+  render(main, headerFilter.getElement(), Position.BEFOREEND);
 };
+renderHeaderFilter(dataTasksCount, navAmountFavorite, navAmountArchive, navAmountRepeat);
 
-renderComponent(mainControl, createSiteHeader());
-renderComponent(main, createSiteSearch());
-renderComponent(main, createFilter(dataTasks.length, navAmountFavorite, navAmountArchive, navAmountRepeat));
-renderComponent(main, createBoardTemplate());
+const renderBoard = () => {
+  const board = new Board();
+
+  render(main, board.getElement(), Position.BEFOREEND);
+};
+renderBoard();
 
 const boardElement = main.querySelector(`.board`);
 const tasksContainer = main.querySelector(`.board__tasks`);
 
-renderComponent(tasksContainer, createCardEdit(dataTasks[0]));
+const renderTask = (taskData) => {
+  const task = new TaskCard(taskData);
+  const taskEdit = new TaskCardEdit(taskData);
 
-const renderTasks = (container, array) => {
-  container.insertAdjacentHTML(`beforeend`, array.map(createCardTemplate).join(``));
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  task.getElement()
+    .querySelector(`.card__btn--edit`)
+    .addEventListener(`click`, () => {
+      tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`focus`, () => {
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement()
+    .querySelector(`.card__form`)
+    .addEventListener(`submit`, () => {
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  render(tasksContainer, task.getElement(), Position.BEFOREEND);
 };
-const sliceTasks = (elFirst, elLast) => {
-  return dataTasks.slice(elFirst, elLast);
+
+const renderTaskRow = (array, elementFrom, elementTo) => {
+  dataTasks.slice(elementFrom, elementTo).forEach((dataTask) => renderTask(dataTask));
 };
 
-renderTasks(tasksContainer, sliceTasks(1, 8));
+renderTaskRow(dataTasks, 0, TASK_ROW);
 
-renderComponent(boardElement, createLoadMoreButton());
+
+const renderLoadMoreButton = () => {
+  const loadMoreButton = new LoadMoreButton();
+
+  render(boardElement, loadMoreButton.getElement(), Position.BEFOREEND);
+};
+renderLoadMoreButton();
 
 const loadMore = document.querySelector(`.load-more`);
-
-const TASK_ROW = 8;
 
 let elementFrom = 0;
 
 const onButtonShowMore = () => {
   elementFrom += TASK_ROW;
   let elementTo = elementFrom + TASK_ROW;
-  const arraySliced = sliceTasks(elementFrom, elementTo);
+  const arraySliced = dataTasks.slice(elementFrom, elementTo);
 
-  renderTasks(tasksContainer, arraySliced);
+  renderTaskRow(dataTasks, elementFrom, elementTo);
 
   if (arraySliced.length <= TASK_ROW - 1) {
     loadMore.style.display = `none`;

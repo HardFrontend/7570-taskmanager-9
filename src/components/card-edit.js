@@ -1,15 +1,41 @@
-export const createCardEdit = ({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) => {
-  return `
-          <article class="card card--edit card--${color} ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``}">
+import {createElement} from "./utils";
+
+export class TaskCardEdit {
+  constructor({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) {
+    this._description = description;
+    this._dueDate = dueDate;
+    this._repeatingDays = repeatingDays;
+    this._tags = tags;
+    this._color = color;
+    this._isFavorite = isFavorite;
+    this._isArchive = isArchive;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    if (this._element) {
+      this._element = null;
+    }
+  }
+
+  getTemplate() {
+    return `<article class="card card--edit card--${this._color} ${Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]) ? `card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
-                  <button type="button" class="card__btn card__btn--archive ${(isArchive) ? `card__btn--disabled` : ``}">
+                  <button type="button" class="card__btn card__btn--archive ${(this._isArchive) ? `card__btn--disabled` : ``}">
                     archive
                   </button>
                   <button
                     type="button"
-                    class="card__btn card__btn--favorites ${(isFavorite) ? `card__btn--disabled` : ``}"
+                    class="card__btn card__btn--favorites ${(this._isFavorite) ? `card__btn--disabled` : ``}"
                   >
                     favorites
                   </button>
@@ -27,7 +53,7 @@ export const createCardEdit = ({description, dueDate, repeatingDays, tags, color
                       class="card__text"
                       placeholder="Start typing your text here..."
                       name="text"
-                    >${description}</textarea>
+                    >${this._description}</textarea>
                   </label>
                 </div>
 
@@ -45,7 +71,7 @@ export const createCardEdit = ({description, dueDate, repeatingDays, tags, color
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${new Date(dueDate).toDateString()}"
+                            value="${new Date(this._dueDate).toDateString()}"
                           />
                         </label>
                       </fieldset>
@@ -82,7 +108,7 @@ export const createCardEdit = ({description, dueDate, repeatingDays, tags, color
                             id="repeat-we-4"
                             name="repeat"
                             value="we"
-                            ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `checked` : ``}
+                            ${Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]) ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-we-4"
                             >we</label
@@ -133,7 +159,7 @@ export const createCardEdit = ({description, dueDate, repeatingDays, tags, color
 
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
-                      ${Array.from(tags).map((tag) => `
+                      ${Array.from(this._tags).map((tag) => `
                         <span class="card__hashtag-inner">
                           <input
                             type="hidden"
@@ -237,4 +263,5 @@ export const createCardEdit = ({description, dueDate, repeatingDays, tags, color
             </form>
           </article>
 `;
-};
+  }
+}
