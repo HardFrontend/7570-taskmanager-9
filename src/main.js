@@ -7,6 +7,7 @@ import {TaskCardEdit} from "./components/card-edit";
 import {TaskCard} from "./components/card-template";
 import {Board} from "./components/board";
 import {getTask} from "./components/data";
+import {ResultEmpty} from "./components/result-empty";
 
 const TASK_COUNT = 17;
 const TASK_ROW = 8;
@@ -75,7 +76,16 @@ const renderBoard = () => {
 
   render(main, board.getElement(), Position.BEFOREEND);
 };
-renderBoard();
+if (!dataTasks.length) {
+  const renderResultEmpty = () => {
+    const resultEmpty = new ResultEmpty();
+
+    render(main, resultEmpty.getElement(), Position.BEFOREEND);
+  };
+  renderResultEmpty();
+} else {
+  renderBoard();
+}
 
 const boardElement = main.querySelector(`.board`);
 const tasksContainer = main.querySelector(`.board__tasks`);
