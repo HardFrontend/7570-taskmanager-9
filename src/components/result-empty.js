@@ -1,14 +1,6 @@
-import {createElement} from "./utils";
+import {AbstractComponent} from "./abstract-component";
 
-export class ResultEmpty {
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
+export class ResultEmpty extends AbstractComponent {
   getTemplate() {
     return `<section class="result container">
                 <button class="result__back">back</button>
