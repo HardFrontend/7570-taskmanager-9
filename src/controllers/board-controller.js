@@ -1,4 +1,4 @@
-import {render, Position} from "../components/utils";
+import {render, unrender, Position} from "../components/utils";
 import {TaskCard} from "../components/card-template";
 import {TaskCardEdit} from "../components/card-edit";
 import {TaskList} from "../components/task-list";
@@ -68,14 +68,55 @@ export class PageController {
       });
 
     taskEdit.getElement()
+      .querySelector(`.card__save`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        const formData = new FormData(taskEdit.getElement().querySelector(`.card__form`));
+
+        const entry = {
+          description: formData.get(`text`),
+          color: formData.get(`color`),
+          tags: new Set(formData.getAll(`hashtag-input`)),
+          dueDate: new Date(formData.get(`date`)),
+          repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
+            acc[it] = true;
+            return acc;
+          }, {
+            'mo': false,
+            'tu': false,
+            'we': false,
+            'th': false,
+            'fr': false,
+            'sa': false,
+            'su': false,
+          })
+        };
+
+        this._arraySorted[this._arraySorted.findIndex((it) => it === taskItem)] = entry;
+
+        unrender(this._taskList.getElement());
+
+        this._taskList.removeElement();
+
+        console.log(this._arraySorted)
+        render(this._board.getElement(), this._taskList.getElement(), Position.AFTERBEGIN);
+        this._renderTaskRow(this._arraySorted, 0, 4, this._taskList.getElement());
+
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      });
+
+/*
+    taskEdit.getElement()
       .querySelector(`.card__form`)
       .addEventListener(`submit`, () => {
         this._taskList.getElement().replaceChild(task.getElement(), taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
-
+*/
     render(place, task.getElement(), Position.BEFOREEND);
   }
+
 
   _renderTaskRow(array, elementFrom, elementTo, place) {
     const arraySlice = array.slice(elementFrom, elementTo);
