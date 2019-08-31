@@ -88,7 +88,7 @@ export class TaskCardEdit {
                             id="repeat-mo-4"
                             name="repeat"
                             value="mo"
-                          />
+                          />                        
                           <label class="card__repeat-day" for="repeat-mo-4"
                             >mo</label
                           >

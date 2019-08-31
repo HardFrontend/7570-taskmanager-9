@@ -9,110 +9,101 @@ import {LoadMoreButton} from "../components/load-more-button";
 
 
 export class TaskController {
-  constructor(container, taskItem, onDataChange, onChangeView) {
-    this._container = container;
-    this._arrayTasks = taskItem;
-    this._arraySorted = this._arrayTasks;
-    this._headerFilter = new Filter();
-    this._board = new Board();
-    this._taskList = new TaskList();
-    this._resultEmpty = new ResultEmpty();
+  constructor(container, taskItem, onChangeView, onDataChange) {
+    this._taskList = container;
+    this._taskItem = taskItem;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
-
-    this._task = new TaskCard(taskItem);
+    this._taskView = new TaskCard(taskItem);
     this._taskEdit = new TaskCardEdit(taskItem);
 
     this.create();
   }
 
-  init() {
-
-    if (!this._arraySorted.length) {
-      render(this._taskList.getElement(), this._resultEmpty.getElement(), Position.BEFOREEND);
-    } else {
-      this._renderTaskRow(this._arrayTasks, 0, 4, this._taskList.getElement());
-    }
-  }
-
   create() {
+
+    flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._taskItem.dueDate,
+    });
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+        this._taskList.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
-
     };
-    this._task.getElement()
-      .querySelector(`.card__btn--edit`)
-      .addEventListener(`click`, () => {
-        this._taskList.getElement().replaceChild(this._taskEdit.getElement(), this._task.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+
+    this._taskView.getElement()
+        .querySelector(`.card__btn--edit`)
+        .addEventListener(`click`, (evt) => {
+          evt.preventDefault();
+          this._onChangeView();
+          this._taskList.getElement().replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
+          document.addEventListener(`keydown`, onEscKeyDown);
+        });
 
     this._taskEdit.getElement().querySelector(`textarea`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
+        .addEventListener(`focus`, () => {
+          document.removeEventListener(`keydown`, onEscKeyDown);
+        });
 
     this._taskEdit.getElement().querySelector(`textarea`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+        .addEventListener(`blur`, () => {
+          document.addEventListener(`keydown`, onEscKeyDown);
+        });
+
+    const repaetInner = this._taskEdit.getElement().querySelector(`.card__repeat-days`);
+    repaetInner.style.display = `none`;
+
+    this._taskEdit.getElement().querySelector(`.card__repeat-toggle`)
+        .addEventListener(`click`, () => {
+
+            if ((repaetInner.style.display = `none`)) {
+              console.log(`clock`);
+              repaetInner.style.display = `block`;
+            }
+
+        });
 
     this._taskEdit.getElement()
-      .querySelector(`.card__save`)
-      .addEventListener(`click`, (evt) => {
-        evt.preventDefault();
+        .querySelector(`.card__save`)
+        .addEventListener(`click`, (evt) => {
+          evt.preventDefault();
+          const formData = new FormData(this._taskEdit.getElement().querySelector(`.card__form`));
 
-        const formData = new FormData(this._taskEdit.getElement().querySelector(`.card__form`));
+          const entry = {
+            description: formData.get(`text`),
+            color: formData.get(`color`),
+            tags: new Set(formData.getAll(`hashtag-input`)),
+            dueDate: new Date(formData.get(`date`)),
+            repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
+              acc[it] = true;
+              return acc;
+            }, {
+              'mo': false,
+              'tu': false,
+              'we': false,
+              'th': false,
+              'fr': false,
+              'sa': false,
+              'su': false,
+            })
+          };
 
-        const entry = {
-          description: formData.get(`text`),
-          color: formData.get(`color`),
-          tags: new Set(formData.getAll(`hashtag-input`)),
-          dueDate: new Date(formData.get(`date`)),
-          repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
-            acc[it] = true;
-            return acc;
-          }, {
-            'mo': false,
-            'tu': false,
-            'we': false,
-            'th': false,
-            'fr': false,
-            'sa': false,
-            'su': false,
-          })
-        };
+          this._onDataChange(entry, this._taskItem);
 
 
-        this._arraySorted[this._arraySorted.findIndex((it) => it === taskItem)] = entry;
+          document.removeEventListener(`keydown`, onEscKeyDown);
+        });
 
-       // unrender(this._taskList.getElement());
-
-        //this._taskList.removeElement();
-        render(this._board.getElement(), this._taskList.getElement(), Position.AFTERBEGIN);
-        this._renderTaskRow(this._arraySorted, 0, 4, this._taskList.getElement());
-
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-    render(this._board.getElement(), this._task.getElement(), Position.BEFOREEND);
-  }
-
-  _renderTaskRow(array, elementFrom, elementTo, place) {
-    const arraySlice = array.slice(elementFrom, elementTo);
-    if (!arraySlice.length) {
-      render(this._taskList.getElement(), this._resultEmpty.getElement(), Position.BEFOREEND);
-    } else {
-      arraySlice.slice(elementFrom, elementTo).forEach((dataTask) => this._renderTask(dataTask, place));
-    }
+    render(this._taskList.getElement(), this._taskView.getElement(), Position.BEFOREEND);
   }
 
   setDefaultView() {
-    if (this._container.getElement().contains(this._taskEdit.getElement())) {
-      this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+    if (this._taskList.getElement().contains(this._taskEdit.getElement())) {
+      this._taskList.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
     }
   }
 }

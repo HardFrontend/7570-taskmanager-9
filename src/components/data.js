@@ -30,7 +30,7 @@ export const getTask = () => ({
   repeatingDays: {
     'mo': false,
     'tu': false,
-    'we': Boolean(Math.round(Math.random())),
+    'we': false,
     'th': false,
     'fr': false,
     'sa': false,
