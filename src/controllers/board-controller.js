@@ -80,7 +80,6 @@ export class PageController {
   _onDataChange(newData, oldData) {
     this._arraySorted[this._arraySorted.findIndex((it) => it === oldData)] = newData;
     this._renderBoard(this._arraySorted);
-
   }
 
   _onButtonShowMore(evt, place, array) {
