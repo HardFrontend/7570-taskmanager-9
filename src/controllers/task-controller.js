@@ -55,15 +55,21 @@ export class TaskController {
         });
 
     const repaetInner = this._taskEdit.getElement().querySelector(`.card__repeat-days`);
-    repaetInner.style.display = `none`;
+    repaetInner.classList.add(`hidden`);
 
     this._taskEdit.getElement().querySelector(`.card__repeat-toggle`)
         .addEventListener(`click`, () => {
 
-            if ((repaetInner.style.display = `none`)) {
-              console.log(`clock`);
-              repaetInner.style.display = `block`;
-            }
+          // if ((repaetInner.style.display = `none`)) {
+          //   console.log(`clock`);
+          //   console.log(repaetInner.style.display );
+          //   repaetInner.classList.remove(`hidden`);
+          //   this._taskEdit.getElement().querySelector(`.card__repeat-status`).innerHTML = `yes`;
+          // } else  {
+          //   console.log(`display = \`none\``);
+          //   this._taskEdit.getElement().querySelector(`.card__repeat-status`).innerHTML = `no`;
+          //   repaetInner.classList.add(`hidden`);
+          // }
 
         });
 
