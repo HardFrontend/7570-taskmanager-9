@@ -35,6 +35,8 @@ export class TaskController {
       }
     };
 
+    // repaetInner.style.display = `none`;
+
     this._taskView.getElement()
         .querySelector(`.card__btn--edit`)
         .addEventListener(`click`, (evt) => {
@@ -42,6 +44,32 @@ export class TaskController {
           this._onChangeView();
           this._taskList.getElement().replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
           document.addEventListener(`keydown`, onEscKeyDown);
+
+          const repaetInner = this._taskEdit.getElement().querySelector(`.card__repeat-days`);
+          const repeatStatus = this._taskEdit.getElement().querySelector(`.card__repeat-status`);
+          const repeatINput = this._taskEdit.getElement().querySelectorAll(`.card__repeat-day-input`);
+
+          repaetInner.style.display = `none`;
+          Object.keys(this._taskItem.repeatingDays).some((day) => {
+            if (this._taskItem.repeatingDays[day]) {
+              repaetInner.style.display = `block`;
+            }
+          });
+
+          this._taskEdit.getElement().querySelector(`.card__repeat-toggle`)
+            .addEventListener(`click`, (evt) => {
+              evt.preventDefault();
+              if ((repaetInner.style.display === `none`)) {
+                repaetInner.style.display = `block`;
+                repeatStatus.innerHTML = `yes`;
+              } else {
+                repaetInner.style.display = `none`;
+                repeatStatus.innerHTML = `no`;
+                repeatINput.forEach((item) => {
+                  item.checked = false;
+                });
+              }
+            });
         });
 
     this._taskEdit.getElement().querySelector(`textarea`)
@@ -54,24 +82,40 @@ export class TaskController {
           document.addEventListener(`keydown`, onEscKeyDown);
         });
 
-    const repaetInner = this._taskEdit.getElement().querySelector(`.card__repeat-days`);
-    repaetInner.classList.add(`hidden`);
+    const tagsNew = (array) => {
+      let tagsEdit = [];
 
-    this._taskEdit.getElement().querySelector(`.card__repeat-toggle`)
-        .addEventListener(`click`, () => {
+      array.forEach((item) => {
+        if (item.length > 1 && !(/\s/.test(item))) {
+          tagsEdit.push(item.replace(/ /g, ``));
+        }
+      });
 
-          // if ((repaetInner.style.display = `none`)) {
-          //   console.log(`clock`);
-          //   console.log(repaetInner.style.display );
-          //   repaetInner.classList.remove(`hidden`);
-          //   this._taskEdit.getElement().querySelector(`.card__repeat-status`).innerHTML = `yes`;
-          // } else  {
-          //   console.log(`display = \`none\``);
-          //   this._taskEdit.getElement().querySelector(`.card__repeat-status`).innerHTML = `no`;
-          //   repaetInner.classList.add(`hidden`);
-          // }
+      return tagsEdit;
+    };
 
-        });
+    const onRemoveTag = () => {
+
+    };
+
+    const tagsList = this._taskEdit.getElement()
+      .querySelector(`.card__hashtag-list`);
+
+    this._taskEdit.getElement()
+      .querySelector(`.card__hashtag-list`).addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        if (evt.target.className !== `card__hashtag-delete`) {
+          return;
+        }
+
+        const buttonRemoveParen = evt.target.parentElement;
+        buttonRemoveParen.style.display = `none`;
+        const btns = [...this._taskEdit.getElement().querySelectorAll(`.card__hashtag-inner`)];
+        const tagIndex = btns.indexOf(buttonRemoveParen);
+        const oldTags = [...this._taskItem.tags];
+
+        this._taskItem.tags = [...oldTags.slice(0, tagIndex), ...oldTags.slice(tagIndex + 1)];
+      });
 
     this._taskEdit.getElement()
         .querySelector(`.card__save`)
@@ -82,7 +126,8 @@ export class TaskController {
           const entry = {
             description: formData.get(`text`),
             color: formData.get(`color`),
-            tags: new Set(formData.getAll(`hashtag-input`)),
+            // tags: [...this._taskItem.tags, ...(formData.getAll(`hashtag-input`))],
+            tags: [...this._taskItem.tags, ...tagsNew(formData.getAll(`hashtag-input`))],
             dueDate: new Date(formData.get(`date`)),
             repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
               acc[it] = true;
